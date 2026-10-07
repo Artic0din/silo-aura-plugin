@@ -13,3 +13,5 @@ All notable changes are documented here, following Keep a Changelog.
 ### Fixed
 
 - Completed the catalog links required for release validation.
+- Kept private HTTP Aura requests off environment-configured proxies.
+- Preserved the manifest version for the first release.
