@@ -23,6 +23,13 @@ const (
 
 var errNoArtwork = errors.New("Aura has no artwork sets for this title")
 
+var directAuraTransport = func() *http.Transport {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	// Keep private Aura credentials off proxies while sharing connection pools.
+	transport.Proxy = nil
+	return transport
+}()
+
 type connectionConfig struct {
 	Address  string `json:"address"`
 	APIToken string `json:"api_token"`
@@ -55,9 +62,13 @@ func (c connectionConfig) client() (*auraClient, error) {
 	if strings.ContainsAny(c.APIToken, "\r\n") {
 		return nil, status.Error(codes.FailedPrecondition, "Aura API token cannot contain a newline.")
 	}
+	transport := http.DefaultTransport
+	if u.Scheme == "http" {
+		transport = directAuraTransport
+	}
 	return &auraClient{
 		baseURL: u, apiToken: strings.TrimSpace(c.APIToken),
-		http: &http.Client{Timeout: requestTimeout, CheckRedirect: func(*http.Request, []*http.Request) error {
+		http: &http.Client{Transport: transport, Timeout: requestTimeout, CheckRedirect: func(*http.Request, []*http.Request) error {
 			// A redirect must not forward the token to another origin.
 			return http.ErrUseLastResponse
 		}},
@@ -153,6 +164,7 @@ func (c *auraClient) libraryTitle(ctx context.Context, itemType string) (string,
 		return "", err
 	}
 	for _, library := range libraries {
+		// Aura selects sets by TMDB ID; the library only enriches included items.
 		if library.Type == itemType && strings.TrimSpace(library.Title) != "" {
 			return library.Title, nil
 		}

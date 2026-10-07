@@ -3,13 +3,78 @@ package main
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"sync/atomic"
 	"testing"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
+
+func TestPrivateHTTPRequestsBypassDefaultProxy(t *testing.T) {
+	var proxyRequests atomic.Int32
+	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		proxyRequests.Add(1)
+		w.WriteHeader(http.StatusBadGateway)
+	}))
+	defer proxy.Close()
+	proxyURL, err := url.Parse(proxy.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	originalTransport := http.DefaultTransport
+	proxyTransport := originalTransport.(*http.Transport).Clone()
+	proxyTransport.Proxy = func(*http.Request) (*url.URL, error) { return proxyURL, nil }
+	http.DefaultTransport = proxyTransport
+	t.Cleanup(func() {
+		http.DefaultTransport = originalTransport
+		proxyTransport.CloseIdleConnections()
+	})
+	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("X-Api-Key") != "test-aura-token" {
+			t.Error("Aura did not receive its API token")
+		}
+		writeEnvelope(w, map[string]interface{}{"sections": []auraLibrary{{Title: "Movies", Type: "movie"}}})
+	}))
+	defer api.Close()
+	client, err := (connectionConfig{Address: api.URL, APIToken: "test-aura-token"}).client()
+	if err != nil {
+		t.Fatal(err)
+	}
+	libraries, err := client.libraries(context.Background())
+	if err != nil || len(libraries) != 1 || proxyRequests.Load() != 0 {
+		t.Fatalf("private request used a proxy: libraries=%d proxy requests=%d error=%v", len(libraries), proxyRequests.Load(), err)
+	}
+}
+
+func TestPrivateHTTPClientsReuseConnections(t *testing.T) {
+	var connections atomic.Int32
+	api := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		writeEnvelope(w, map[string]interface{}{"sections": []auraLibrary{{Title: "Movies", Type: "movie"}}})
+	}))
+	api.Config.ConnState = func(_ net.Conn, state http.ConnState) {
+		if state == http.StateNew {
+			connections.Add(1)
+		}
+	}
+	api.Start()
+	defer api.Close()
+	for range 2 {
+		client, err := (connectionConfig{Address: api.URL, APIToken: "test-aura-token"}).client()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := client.libraries(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if connections.Load() != 1 {
+		t.Fatalf("separate clients opened %d connections; want one reused connection", connections.Load())
+	}
+}
 
 func TestAuraFailures(t *testing.T) {
 	for _, tc := range []struct {
