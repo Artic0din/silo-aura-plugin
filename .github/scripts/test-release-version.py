@@ -31,7 +31,8 @@ with tempfile.TemporaryDirectory(prefix="silo-release-test-") as directory:
     original = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repository).decode().strip()
 
     for run, ref, expected in [("100", "refs/heads/main", "0.1.0"), ("100", "refs/heads/main", "0.1.0"), ("101", "refs/heads/main", "0.1.1"), ("101", "refs/tags/v0.1.1", "0.1.1")]:
-        subprocess.run(["git", "reset", "--hard", original], cwd=repository, check=True, capture_output=True)
+        checkout = ref if ref.startswith("refs/tags/") else original
+        subprocess.run(["git", "reset", "--hard", checkout], cwd=repository, check=True, capture_output=True)
         (root / "output").write_text("")
         environment.update(GITHUB_RUN_ID=run, GITHUB_REF=ref, GITHUB_REF_NAME=ref.rsplit("/", 1)[-1])
         subprocess.run(["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", script], cwd=repository, env=environment, check=True, capture_output=True)
@@ -40,4 +41,9 @@ with tempfile.TemporaryDirectory(prefix="silo-release-test-") as directory:
     tags = subprocess.check_output(["git", "tag", "-l"], cwd=repository).decode().splitlines()
     assert tags == ["v0.1.0", "v0.1.1"], tags
 
-print("Release version checks passed: initial version, retry, next run and explicit tag")
+    subprocess.run(["git", "reset", "--hard", original], cwd=repository, check=True, capture_output=True)
+    environment.update(GITHUB_REF="refs/tags/v9.9.9", GITHUB_REF_NAME="v9.9.9")
+    mismatch = subprocess.run(["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", script], cwd=repository, env=environment, capture_output=True, text=True)
+    assert mismatch.returncode == 1 and "does not match manifest.json" in mismatch.stderr, mismatch
+
+print("Release version checks passed: initial version, retry, next run, explicit tag and version mismatch")

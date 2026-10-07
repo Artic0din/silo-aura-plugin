@@ -26,6 +26,10 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             tag="${GITHUB_REF_NAME}"
             version="${tag#v}"
+            if [ "$version" != "$(jq -r '.version' manifest.json)" ]; then
+              echo "Release tag version ${version} does not match manifest.json" >&2
+              exit 1
+            fi
           elif tag=$(git tag -l 'v*' --format='%(refname:short) %(contents:subject)' |
               awk -v run="$GITHUB_RUN_ID" '$2 == "Silo" && $3 == "release" && $4 == "run" && $5 == run { print $1; exit }') && [ -n "$tag" ]; then
             version="${tag#v}"

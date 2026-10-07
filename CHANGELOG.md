@@ -16,3 +16,4 @@ All notable changes are documented here, following Keep a Changelog.
 - Kept private HTTP Aura requests off environment-configured proxies.
 - Preserved the manifest version for the first release.
 - Reused the allocated version when retrying a failed release run.
+- Rejected release tags that disagreed with the manifest version.
