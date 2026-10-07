@@ -26,6 +26,9 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             tag="${GITHUB_REF_NAME}"
             version="${tag#v}"
+          elif tag=$(git tag -l 'v*' --format='%(refname:short) %(contents:subject)' |
+              awk -v run="$GITHUB_RUN_ID" '$2 == "Silo" && $3 == "release" && $4 == "run" && $5 == run { print $1; exit }') && [ -n "$tag" ]; then
+            version="${tag#v}"
           else
             # Auto-increment patch from latest tag.
             latest=$(git tag -l 'v*' --sort=-v:refname | head -n1)
@@ -47,7 +50,7 @@ jobs:
             if ! git diff --cached --quiet; then
               git commit -m "chore(release): bump version to ${version}"
             fi
-            git tag "$tag"
+            git tag -a "$tag" -m "Silo release run ${GITHUB_RUN_ID}"
             # Push only the tag. main is protected (PRs only), so pushing the
             # bump commit there fails the whole run. The version is always
             # derived from the latest tag, and the tag's commit carries the

@@ -28,6 +28,8 @@ jobs:
         run: test -z "$(gofmt -l .)"
       - name: Test
         run: go test -race ./...
+      - name: Test release version allocation
+        run: python3 .github/scripts/test-release-version.py
       - name: Vet
         run: go vet ./...
       - name: Build
