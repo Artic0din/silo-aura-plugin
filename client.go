@@ -42,8 +42,8 @@ type auraClient struct {
 }
 
 func (c connectionConfig) client() (*auraClient, error) {
-	address := strings.TrimSpace(c.Address)
-	if address == "" || strings.TrimSpace(c.APIToken) == "" {
+	address, apiToken := strings.TrimSpace(c.Address), strings.TrimSpace(c.APIToken)
+	if address == "" || apiToken == "" {
 		return nil, status.Error(codes.FailedPrecondition, "Configure the Aura address and API token in Silo's plugin settings.")
 	}
 	if !strings.Contains(address, "://") {
@@ -59,7 +59,7 @@ func (c connectionConfig) client() (*auraClient, error) {
 			return nil, status.Error(codes.FailedPrecondition, "Use HTTPS for Aura, or HTTP with a private or loopback IP address.")
 		}
 	}
-	if strings.ContainsAny(c.APIToken, "\r\n") {
+	if strings.ContainsAny(apiToken, "\r\n") {
 		return nil, status.Error(codes.FailedPrecondition, "Aura API token cannot contain a newline.")
 	}
 	transport := http.DefaultTransport
@@ -67,7 +67,7 @@ func (c connectionConfig) client() (*auraClient, error) {
 		transport = directAuraTransport
 	}
 	return &auraClient{
-		baseURL: u, apiToken: strings.TrimSpace(c.APIToken),
+		baseURL: u, apiToken: apiToken,
 		http: &http.Client{Transport: transport, Timeout: requestTimeout, CheckRedirect: func(*http.Request, []*http.Request) error {
 			// A redirect must not forward the token to another origin.
 			return http.ErrUseLastResponse
