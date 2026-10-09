@@ -1,0 +1,59 @@
+{
+  "plugin_id": "artic0din.aura-artwork",
+  "version": "0.1.0",
+  "checksum": "__CHECKSUM__",
+  "silo_api_version": "v1",
+  "presentation": {
+    "display_name": "Aura Artwork",
+    "summary": "Choose MediUX artwork from Aura in Silo's image picker.",
+    "description_markdown": "Provides movie and series posters, backdrops and season posters for manual selection. Requires Silo's image_picker_lookup_provider_ids support.",
+    "setup_markdown": "Save your **Aura address** and **API token**, test the connection, and enable **Aura Artwork** in your movie and series library provider priorities. Open **Edit Metadata > Images** on a title to choose artwork. Aura must have configured libraries and a populated library cache. Its address must be reachable from both Silo and the browser displaying previews.",
+    "homepage_url": "https://github.com/Artic0din/silo-aura-plugin",
+    "source_url": "https://github.com/Artic0din/silo-aura-plugin",
+    "support_url": "https://github.com/Artic0din/silo-aura-plugin/issues",
+    "changelog_url": "https://github.com/Artic0din/silo-aura-plugin/releases",
+    "publisher_name": "Artic0din",
+    "publisher_url": "https://github.com/Artic0din",
+    "license_spdx": "AGPL-3.0-or-later"
+  },
+  "supported_platforms": [
+    {"os": "linux", "arch": "amd64"},
+    {"os": "linux", "arch": "arm64"},
+    {"os": "darwin", "arch": "arm64"}
+  ],
+  "capabilities": [
+    {
+      "type": "metadata_provider.v1",
+      "id": "aura",
+      "display_name": "Aura Artwork",
+      "description": "MediUX artwork for manual selection using TMDB IDs.",
+      "metadata": {
+        "default_priority": {"movie": 50, "series": 50, "season": 50},
+        "default_enabled": false,
+        "image_picker_lookup_provider_ids": ["tmdb"]
+      }
+    },
+    {
+      "type": "image_resolver.v1",
+      "id": "aura",
+      "display_name": "Aura Images",
+      "metadata": {"schemes": ["aura"], "priority": 100}
+    }
+  ],
+  "global_config_schema": [
+    {
+      "key": "connection",
+      "title": "Aura connection",
+      "description": "Connect to your running Aura API.",
+      "required": true,
+      "json_schema": "{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\"},\"api_token\":{\"type\":\"string\"}},\"additionalProperties\":false}",
+      "admin_form": {
+        "fields": [
+          {"key":"address","label":"Aura address","description":"Aura IP address and API port, or an HTTPS URL. Use the API port, not the web app port.","control":"ADMIN_FORM_CONTROL_TEXT","required":true},
+          {"key":"api_token","label":"API token","description":"Aura's existing API key, sent as X-Api-Key.","control":"ADMIN_FORM_CONTROL_PASSWORD","secret":true,"required":true}
+        ],
+        "submit_label": "Save connection"
+      }
+    }
+  ]
+}
