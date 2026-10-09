@@ -159,8 +159,8 @@ func TestConfigurationAndMissingIdentity(t *testing.T) {
 			t.Fatal("invalid address accepted", address)
 		}
 	}
-	if _, err := (connectionConfig{Address: "10.0.0.10:8888", APIToken: "test-aura-token\r\n"}).client(); err != nil {
-		t.Fatal("token with a trailing line break rejected", err)
+	if client, err := (connectionConfig{Address: "10.0.0.10:8888", APIToken: "test-aura-token\r\n"}).client(); err != nil || client.apiToken != "test-aura-token" {
+		t.Fatal("token with a trailing line break was rejected or not trimmed", err)
 	}
 	if _, err := (connectionConfig{Address: "10.0.0.10:8888", APIToken: "test\naura-token"}).client(); status.Code(err) != codes.FailedPrecondition {
 		t.Fatal("token with an inner newline accepted", err)
