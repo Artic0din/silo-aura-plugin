@@ -49,14 +49,14 @@ Use `GOARCH=arm64` for a Linux ARM server, or `GOOS=darwin GOARCH=arm64` for an 
 Builds resolve `github.com/Silo-Server/silo-plugin-sdk` from its pinned published tag.
 No machine-specific SDK replacement is committed.
 `manifest.json` is embedded in the binary, and the SDK supplies binary introspection and its actual checksum.
-The `.env.example` lists connection variable names for local API checks; the plugin itself reads Silo's saved settings.
 
 ## Contributing and releases
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) before making changes.
-They apply Silo's shared contribution rules, AI disclosure policy and checked-in writing skill.
+They apply Silo's shared contribution rules and AI disclosure policy.
 The reusable Linux CI workflow runs formatting, race tests, vet, build and manifest introspection against published dependencies.
 The release workflow follows the TMDB plugin's three-platform binary and checksum layout.
+Each GitHub release has notes generated from its merged pull requests, which the catalog links as the changelog.
 Optional catalog notifications target [your Silo catalog fork](https://github.com/Artic0din/silo-plugins).
 Publishing to Silo's official catalog remains a separate contribution.
 
