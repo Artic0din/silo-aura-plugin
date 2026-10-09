@@ -7,7 +7,7 @@ plugin-specific workflow.
 
 ## Before you start
 
-Open an [issue](https://github.com/Artic0din/silo-aura-plugin/issues)
+Open an [issue](https://github.com/Artic0din/silo-plugin-metadata-aura/issues)
 before changing artwork lookup, image filtering, image resolution, configuration, or
 the advertised capabilities. This repository owns Aura artwork lookup and image resolution;
 plugin contracts belong in

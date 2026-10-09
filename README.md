@@ -7,7 +7,7 @@ It does not identify titles or select artwork during metadata refreshes.
 
 ## Server requirement
 
-Silo needs the `image_picker_lookup_provider_ids` extension tracked in [issue #1](https://github.com/Artic0din/silo-aura-plugin/issues/1).
+Silo needs the `image_picker_lookup_provider_ids` extension tracked in [issue #1](https://github.com/Artic0din/silo-plugin-metadata-aura/issues/1).
 An unmodified server skips an artwork-only provider because the title has no provider-specific Aura ID.
 The plugin uses the published Silo SDK without changing its protobuf contract.
 
@@ -40,7 +40,7 @@ The plugin reports authentication, cache and API failures separately from a titl
 ```sh
 go test -race ./...
 go vet ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/silo-aura-plugin-linux-amd64 .
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/silo-plugin-metadata-aura-linux-amd64 .
 ```
 
 Use `GOARCH=arm64` for a Linux ARM server, or `GOOS=darwin GOARCH=arm64` for an Apple Silicon Mac.

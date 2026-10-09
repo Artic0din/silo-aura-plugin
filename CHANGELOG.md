@@ -17,3 +17,4 @@ All notable changes are documented here, following Keep a Changelog.
 - Preserved the manifest version for the first release.
 - Reused the allocated version when retrying a failed release run.
 - Rejected release tags that disagreed with the manifest version.
+- Pointed the catalog links and module path at the renamed `silo-plugin-metadata-aura` repository.

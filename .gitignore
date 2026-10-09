@@ -1,6 +1,6 @@
 /dist/
 /.env
-/silo-aura-plugin
+/silo-plugin-metadata-aura
 /go.work
 /go.work.sum
 /.omc/
