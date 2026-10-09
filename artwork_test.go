@@ -176,3 +176,14 @@ func writeEnvelope(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]interface{}{"status": "success", "data": data})
 }
+
+func TestSeasonPosterTypeAliases(t *testing.T) {
+	season := int32(1)
+	// Aura's code sends season_poster; its API docs list the other spellings.
+	for _, assetType := range []string{"season_poster", "seasonPoster", "specialSeasonPoster", "special_season_poster"} {
+		asset := auraImage{Type: assetType, ItemTMDBID: "123", SeasonNumber: &season}
+		if kind := imageKind(asset, "123", &season); kind != "poster" {
+			t.Errorf("season asset type %q: kind = %q; want poster", assetType, kind)
+		}
+	}
+}
