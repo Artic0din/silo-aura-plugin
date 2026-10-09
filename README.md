@@ -32,6 +32,8 @@ Applying an image changes the title immediately; cancelling the editor does not 
 
 Episode title cards are excluded because Silo's current image request has no episode identifier.
 Assets belonging to other movies or series are filtered out.
+Backdrops are listed without a language so Silo's **Textless** filter shows them, even when MediUX tagged one.
+Posters keep Aura's language because they usually carry title text.
 The picker uses thumbnail images, detail variants use optimized images, and full/original or unknown variants use the original.
 The plugin reports authentication, cache and API failures separately from a title with no artwork.
 

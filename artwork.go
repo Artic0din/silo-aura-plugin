@@ -98,8 +98,13 @@ func imagesFromSets(sets []auraSet, tmdbID string, season *int32) (*pluginv1.Get
 				continue
 			}
 			seen[path] = true
+			language := asset.Language
+			if kind == "backdrop" {
+				// Silo's textless filter needs an empty language; Aura reports English when MediUX has none, so a real tag is indistinguishable.
+				language = ""
+			}
 			response.Images = append(response.Images, &pluginv1.ImageRecord{
-				Kind: kind, Url: path, Language: asset.Language, SeasonNumber: season,
+				Kind: kind, Url: path, Language: language, SeasonNumber: season,
 				Metadata: &structpb.Struct{Fields: map[string]*structpb.Value{
 					"creator": structpb.NewStringValue(strings.TrimSpace(set.UserCreated)),
 				}},

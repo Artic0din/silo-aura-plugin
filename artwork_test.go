@@ -22,7 +22,7 @@ func TestArtworkPicker(t *testing.T) {
 	assets := []auraImage{
 		{ID: "poster", Type: "poster", Modified: testModified, ItemTMDBID: "123", Language: "en"},
 		{ID: "poster", Type: "poster", Modified: testModified, ItemTMDBID: "123"},
-		{ID: "backdrop", Type: "backdrop", Modified: testModified, ItemTMDBID: "123"},
+		{ID: "backdrop", Type: "backdrop", Modified: testModified, ItemTMDBID: "123", Language: "English"},
 		{ID: "other-movie", Type: "poster", Modified: testModified, ItemTMDBID: "999"},
 		{ID: "season-one", Type: "seasonPoster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &one},
 		{ID: "specials", Type: "specialSeasonPoster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &zero},
@@ -78,6 +78,9 @@ func TestArtworkPicker(t *testing.T) {
 				}
 				if !strings.HasPrefix(image.Url, artworkScheme+"image/"+assetID+"?") || image.SeasonNumber != tc.season {
 					t.Fatalf("unexpected image %v", image)
+				}
+				if want, ok := map[string]string{"poster": "en", "backdrop": ""}[assetID]; ok && image.Language != want {
+					t.Fatalf("image %s language = %q; want %q", assetID, image.Language, want)
 				}
 				resolved, err := server.resolveImage(image.Url, "original")
 				if err != nil {
