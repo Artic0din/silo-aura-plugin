@@ -57,7 +57,7 @@ func TestArtworkPicker(t *testing.T) {
 					library, itemType = "Movies & TV", "movie"
 				}
 				if r.URL.Query().Get("item_library_title") != library || r.URL.Query().Get("item_type") != itemType {
-					t.Error("lookup did not use the discovered library and Aura item type")
+					t.Error("lookup did not use the discovered library and AURA item type")
 				}
 				writeEnvelope(w, map[string]interface{}{"sets": []interface{}{map[string]interface{}{"user_created": "poster-maker", "images": assets}}})
 			}))
@@ -185,7 +185,7 @@ func writeEnvelope(w http.ResponseWriter, data interface{}) {
 
 func TestSeasonPosterTypeAliases(t *testing.T) {
 	season := int32(1)
-	// Aura's code sends season_poster; its API docs list the other spellings.
+	// AURA's code sends season_poster; its API docs list the other spellings.
 	for _, assetType := range []string{"season_poster", "seasonPoster", "specialSeasonPoster", "special_season_poster"} {
 		asset := auraImage{Type: assetType, ItemTMDBID: "123", SeasonNumber: &season}
 		if kind := imageKind(asset, "123", &season); kind != "poster" {

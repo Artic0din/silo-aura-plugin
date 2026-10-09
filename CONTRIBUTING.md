@@ -1,4 +1,4 @@
-# Contributing to the Aura Artwork Plugin
+# Contributing to the AURA Artwork Plugin
 
 The [Silo contribution guide](https://github.com/Silo-Server/.github/blob/main/CONTRIBUTING.md)
 covers project-wide coordination, focused changes, evidence, AI disclosure, and
@@ -9,7 +9,7 @@ plugin-specific workflow.
 
 Open an [issue](https://github.com/Artic0din/silo-plugin-metadata-aura/issues)
 before changing artwork lookup, image filtering, image resolution, configuration, or
-the advertised capabilities. This repository owns Aura artwork lookup and image resolution;
+the advertised capabilities. This repository owns AURA artwork lookup and image resolution;
 plugin contracts belong in
 [`silo-plugin-sdk`](https://github.com/Silo-Server/silo-plugin-sdk), while host
 metadata orchestration belongs in
