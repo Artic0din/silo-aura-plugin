@@ -76,7 +76,7 @@ func (s *artworkServer) GetImages(ctx context.Context, req *pluginv1.GetImagesRe
 		return nil, err
 	}
 	if data.Sets == nil {
-		return nil, status.Error(codes.DataLoss, "Aura returned no artwork sets field.")
+		return nil, status.Error(codes.DataLoss, "AURA returned no artwork sets field.")
 	}
 	return imagesFromSets(*data.Sets, tmdbID, req.SeasonNumber)
 }
@@ -91,7 +91,7 @@ func imagesFromSets(sets []auraSet, tmdbID string, season *int32) (*pluginv1.Get
 				continue
 			}
 			if !assetIDPattern.MatchString(asset.ID) || !validModifiedDate(asset.Modified) {
-				return nil, status.Error(codes.DataLoss, "Aura returned an artwork asset with an invalid ID or modified date.")
+				return nil, status.Error(codes.DataLoss, "AURA returned an artwork asset with an invalid ID or modified date.")
 			}
 			path := artworkScheme + "image/" + asset.ID + "?" + url.Values{"modified_date": {asset.Modified}}.Encode()
 			if seen[path] {
@@ -100,7 +100,7 @@ func imagesFromSets(sets []auraSet, tmdbID string, season *int32) (*pluginv1.Get
 			seen[path] = true
 			language := asset.Language
 			if kind == "backdrop" {
-				// Silo's textless filter needs an empty language; Aura reports English when MediUX has none, so a real tag is indistinguishable.
+				// Silo's textless filter needs an empty language; AURA reports English when MediUX has none, so a real tag is indistinguishable.
 				language = ""
 			}
 			response.Images = append(response.Images, &pluginv1.ImageRecord{
@@ -149,12 +149,12 @@ func (s *artworkServer) resolveImage(rawPath, variant string) (string, error) {
 	}
 	path, err := url.Parse(strings.TrimPrefix(rawPath, artworkScheme))
 	if err != nil || path.IsAbs() || path.Host != "" || path.Fragment != "" || !strings.HasPrefix(path.Path, "image/") {
-		return "", status.Error(codes.InvalidArgument, "Invalid Aura artwork path.")
+		return "", status.Error(codes.InvalidArgument, "Invalid AURA artwork path.")
 	}
 	assetID := strings.TrimPrefix(path.Path, "image/")
 	query, err := url.ParseQuery(path.RawQuery)
 	if err != nil || len(query) != 1 || len(query["modified_date"]) != 1 || !assetIDPattern.MatchString(assetID) || !validModifiedDate(query.Get("modified_date")) {
-		return "", status.Error(codes.InvalidArgument, "Invalid Aura artwork ID or modified date.")
+		return "", status.Error(codes.InvalidArgument, "Invalid AURA artwork ID or modified date.")
 	}
 	quality := "original"
 	switch variant {

@@ -35,7 +35,7 @@ func TestPrivateHTTPRequestsBypassDefaultProxy(t *testing.T) {
 	})
 	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("X-Api-Key") != "test-aura-token" {
-			t.Error("Aura did not receive its API token")
+			t.Error("AURA did not receive its API token")
 		}
 		writeEnvelope(w, map[string]interface{}{"sections": []auraLibrary{{Title: "Movies", Type: "movie"}}})
 	}))
@@ -126,7 +126,7 @@ func TestAuraEmptySetsAndRedirect(t *testing.T) {
 	client, _ := (connectionConfig{Address: api.URL, APIToken: "test-aura-token"}).client()
 	var data map[string]interface{}
 	if err := client.get(context.Background(), "/api/mediux/sets/item", nil, &data); !errors.Is(err, errNoArtwork) {
-		t.Fatal("Aura's documented empty sets response should be empty", err)
+		t.Fatal("AURA's documented empty sets response should be empty", err)
 	}
 	if _, err := client.libraries(context.Background()); err == nil || forwarded {
 		t.Fatal("redirect should fail without forwarding credentials", err)
