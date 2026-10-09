@@ -21,8 +21,8 @@ titles or choose artwork during metadata refreshes.
 1. Download the binary for your server from
    [Releases](https://github.com/Artic0din/silo-plugin-metadata-aura/releases) and
    install it through **Admin > Plugins > Catalog > Install from a file**.
-2. Open **AURA Artwork**, enter the **AURA address** and **API token**, and
-   select **Test connection**.
+2. Open **AURA Artwork**, enter the **AURA address** and **API token**, select
+   **Test connection**, then select **Save connection**.
 3. Enable **AURA Artwork** in the movie and series libraries' metadata provider
    chains, including the season level for season posters.
 4. Open a title's **Edit Metadata > Images** and choose **Apply** on an AURA
