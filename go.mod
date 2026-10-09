@@ -1,4 +1,4 @@
-module github.com/Artic0din/silo-aura-plugin
+module github.com/Artic0din/silo-plugin-metadata-aura
 
 go 1.26.0
 

@@ -92,7 +92,7 @@ func (c *auraClient) get(ctx context.Context, path string, query url.Values, tar
 	}
 	req.Header.Set("X-Api-Key", c.apiToken)
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "silo-aura-plugin/"+version)
+	req.Header.Set("User-Agent", "silo-plugin-metadata-aura/"+version)
 	response, err := c.http.Do(req)
 	if err != nil {
 		if ctx.Err() != nil {
