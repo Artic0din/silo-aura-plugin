@@ -17,9 +17,18 @@
     "license_spdx": "AGPL-3.0-or-later"
   },
   "supported_platforms": [
-    {"os": "linux", "arch": "amd64"},
-    {"os": "linux", "arch": "arm64"},
-    {"os": "darwin", "arch": "arm64"}
+    {
+      "os": "linux",
+      "arch": "amd64"
+    },
+    {
+      "os": "linux",
+      "arch": "arm64"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64"
+    }
   ],
   "capabilities": [
     {
@@ -28,16 +37,27 @@
       "display_name": "AURA Artwork",
       "description": "MediUX artwork for manual selection using TMDB IDs.",
       "metadata": {
-        "default_priority": {"movie": 50, "series": 50, "season": 50},
+        "default_priority": {
+          "movie": 50,
+          "series": 50,
+          "season": 50
+        },
         "default_enabled": false,
-        "image_picker_lookup_provider_ids": ["tmdb"]
+        "image_picker_lookup_provider_ids": [
+          "tmdb"
+        ]
       }
     },
     {
       "type": "image_resolver.v1",
       "id": "aura",
       "display_name": "AURA Images",
-      "metadata": {"schemes": ["aura"], "priority": 100}
+      "metadata": {
+        "schemes": [
+          "aura"
+        ],
+        "priority": 100
+      }
     }
   ],
   "global_config_schema": [
@@ -49,8 +69,21 @@
       "json_schema": "{\"type\":\"object\",\"properties\":{\"address\":{\"type\":\"string\"},\"api_token\":{\"type\":\"string\"}},\"additionalProperties\":false}",
       "admin_form": {
         "fields": [
-          {"key":"address","label":"AURA address","description":"AURA IP address and API port, or an HTTPS URL. Use the API port, not the web app port.","control":"ADMIN_FORM_CONTROL_TEXT","required":true},
-          {"key":"api_token","label":"API token","description":"AURA's existing API key, sent as X-Api-Key.","control":"ADMIN_FORM_CONTROL_PASSWORD","secret":true,"required":true}
+          {
+            "key": "address",
+            "label": "AURA address",
+            "description": "AURA IP address and API port, or an HTTPS URL. Use the API port, not the web app port.",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "required": true
+          },
+          {
+            "key": "api_token",
+            "label": "API token",
+            "description": "AURA's existing API key, sent as X-Api-Key.",
+            "control": "ADMIN_FORM_CONTROL_PASSWORD",
+            "secret": true,
+            "required": true
+          }
         ],
         "submit_label": "Save connection"
       }
