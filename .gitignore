@@ -1,6 +1,18 @@
-/dist/
-/.env
 /silo-plugin-metadata-aura
-/go.work
-/go.work.sum
+dist/
+*.exe
+go.work
+go.work.sum
+.env
+.env.*
+*.log
+logs/
+.DS_Store
+# Local agent/tooling state
+/.agents/
+/.claude/
 /.omc/
+.codex/
+.cursor/
+.worktrees/
+.playwright-mcp/

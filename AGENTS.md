@@ -4,8 +4,6 @@ Read [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before workin
 
 ## Writing
 
-Apply the checked-in [unslop skill](.agents/skills/unslop/SKILL.md) before creating or updating an issue or pull request.
-
 Give human-facing prose a final readability pass. Lead with the outcome, use concrete plain language and active voice, and cut filler, stock framing, repetition, and promotional claims. Preserve meaning, evidence, citations, uncertainty, and established terminology. Never rewrite exact quotations, commands, logs, identifiers, API names, or contractual language. Match the audience and use restrained formatting.
 
 ## Pull requests
