@@ -24,8 +24,8 @@ func TestArtworkPicker(t *testing.T) {
 		{ID: "poster", Type: "poster", Modified: testModified, ItemTMDBID: "123"},
 		{ID: "backdrop", Type: "backdrop", Modified: testModified, ItemTMDBID: "123", Language: "English"},
 		{ID: "other-movie", Type: "poster", Modified: testModified, ItemTMDBID: "999"},
-		{ID: "season-one", Type: "seasonPoster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &one},
-		{ID: "specials", Type: "specialSeasonPoster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &zero},
+		{ID: "season-one", Type: "season_poster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &one},
+		{ID: "specials", Type: "season_poster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &zero},
 		{ID: "title-card", Type: "poster", Modified: testModified, ItemTMDBID: "123", SeasonNumber: &one, EpisodeNumber: &two},
 	}
 	for _, tc := range []struct {
