@@ -1,67 +1,84 @@
-# Aura Artwork for Silo
+# AURA Artwork Plugin for Silo
 
-Choose MediUX posters and backdrops through [Aura](https://github.com/mediux-team/AURA) in Silo's existing image picker.
-The plugin supports movies, series and exact season posters, including Specials.
-Each choice is labelled **AURA** and shows the set uploader's username when Aura supplies it.
-It does not identify titles or select artwork during metadata refreshes.
+Community [Silo](https://github.com/Silo-Server/silo-server) metadata plugin
+backed by [AURA](https://github.com/mediux-team/AURA). It adds MediUX movie and
+series posters, backdrops, and season posters, including Specials, to Silo's
+image picker and resolves `aura://` artwork references. Each image is labelled
+**AURA** and shows the set creator's username. The plugin does not identify
+titles or choose artwork during metadata refreshes.
 
-## Server requirement
+## Requirements
 
-Silo needs the `image_picker_lookup_provider_ids` extension tracked in [issue #1](https://github.com/Artic0din/silo-plugin-metadata-aura/issues/1).
-An unmodified server skips an artwork-only provider because the title has no provider-specific Aura ID.
-The plugin uses the published Silo SDK without changing its protobuf contract.
+- A Silo server with `image_picker_lookup_provider_ids` support, tracked in
+  [issue #1](https://github.com/Artic0din/silo-plugin-metadata-aura/issues/1).
+  An unmodified server skips this plugin because titles have no AURA ID.
+- A running AURA instance with configured movie and show libraries and a
+  populated library cache.
+- Titles that already have a TMDB ID in Silo.
 
-## Configure and use
+## Setup
 
-1. Install the binary for your server's operating system and architecture through **Admin > Plugins > Catalog > Install from a file**.
-2. Open **Aura Artwork** and enter the **Aura address** and **API token**.
-3. Select **Test connection**, save the settings, and enable **Aura Artwork** in the movie and series libraries' provider priorities, including the season level for season posters.
-4. Open a title's **Edit Metadata > Images** and choose **Apply** on an Aura image.
+1. Download the binary for your server from
+   [Releases](https://github.com/Artic0din/silo-plugin-metadata-aura/releases) and
+   install it through **Admin > Plugins > Catalog > Install from a file**.
+2. Open **AURA Artwork**, enter the **AURA address** and **API token**, and
+   select **Test connection**.
+3. Enable **AURA Artwork** in the movie and series libraries' metadata provider
+   chains, including the season level for season posters.
+4. Open a title's **Edit Metadata > Images** and choose **Apply** on an AURA
+   image.
 
-The address accepts a private IP and API port, such as `10.0.0.10:8888`, or an HTTPS URL.
-HTTP is restricted to private or loopback IP addresses.
-Use Aura's API port rather than its web app port.
-The API token is a secret field saved and encrypted by Silo; it is never included in an image URL.
-Aura's libraries are discovered automatically, so no library-name settings are needed.
-Titles must already have a TMDB ID in Silo so Aura can find their artwork.
-Aura must have configured movie/show libraries and a populated library cache.
-Picker previews load from Aura's address in the browser; Silo downloads the original when artwork is applied and keeps its own copy.
-Both the browser and Silo must be able to reach that address.
-When Silo is opened over HTTPS, use an HTTPS Aura API address because browsers block HTTP image previews on HTTPS pages.
-Applying an image changes the title immediately; cancelling the editor does not undo it.
+The address is a private IP with AURA's API port, such as `10.0.0.10:8888`, or
+an HTTPS URL. Plain HTTP is accepted only for private or loopback addresses. Use
+AURA's API port, not its web app port. Silo stores the API token as an encrypted
+secret, and it never appears in an image URL.
 
-Episode title cards are excluded because Silo's current image request has no episode identifier.
-Assets belonging to other movies or series are filtered out.
-Backdrops are listed without a language so Silo's **Textless** filter shows them, even when MediUX tagged one.
-Posters keep Aura's language because they usually carry title text.
-The picker uses thumbnail images, detail variants use optimized images, and full/original or unknown variants use the original.
-The plugin reports authentication, cache and API failures separately from a title with no artwork.
+## Known Limitations
 
-## Build and check
+- Picker previews load from AURA's address in the browser, so both the browser
+  and Silo must reach it. When Silo is served over HTTPS, use an HTTPS AURA
+  address; browsers block HTTP images on HTTPS pages.
+- Applying an image changes the title immediately. Cancelling the editor does
+  not undo it.
+- Episode title cards are not offered, because Silo's image request has no
+  episode number.
+- Backdrops are listed without a language so Silo's **Textless** filter shows
+  them, even when MediUX tagged one. Posters keep AURA's language because they
+  usually carry title text.
+
+## Dependency Model
+
+This repository consumes `github.com/Silo-Server/silo-plugin-sdk` as a normal Go module dependency. CI and release builds run with `GOWORK=off` and expect the SDK version in `go.mod` to resolve from a published semver tag.
+
+For local multi-repository development, use a `go.work` file that points at a
+sibling SDK checkout. Do not commit machine-local filesystem replacements.
+
+## Development
 
 ```sh
-go test -race ./...
-go vet ./...
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o dist/silo-plugin-metadata-aura-linux-amd64 .
+go test ./...
+go build .
 ```
 
-Use `GOARCH=arm64` for a Linux ARM server, or `GOOS=darwin GOARCH=arm64` for an Apple Silicon Mac.
-Builds resolve `github.com/Silo-Server/silo-plugin-sdk` from its pinned published tag.
-No machine-specific SDK replacement is committed.
-`manifest.json` is embedded in the binary, and the SDK supplies binary introspection and its actual checksum.
+## Contributing
 
-## Contributing and releases
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) before making changes.
-They apply Silo's shared contribution rules and AI disclosure policy.
-The reusable Linux CI workflow runs formatting, race tests, vet, build and manifest introspection against published dependencies.
-The release workflow follows the TMDB plugin's three-platform binary and checksum layout.
-Each GitHub release has notes generated from its merged pull requests, which the catalog links as the changelog.
-Optional catalog notifications target [your Silo catalog fork](https://github.com/Artic0din/silo-plugins).
-Publishing to Silo's official catalog remains a separate contribution.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Artwork
+lookup, image filtering, image resolution, configuration, or advertised
+capability changes should start as an issue.
 
 ## Attribution
 
-Artwork is supplied by MediUX creators through Aura.
-This community plugin is not maintained by Silo or the Aura/MediUX teams.
-See [LICENSE](LICENSE) for the AGPL-3.0-or-later license.
+Artwork is created by the [MediUX](https://mediux.pro/) community and served
+through [AURA](https://github.com/mediux-team/AURA). This community plugin is
+not maintained or endorsed by Silo, AURA, or MediUX.
+
+<a href="https://mediux.pro/">
+  <img src="https://raw.githubusercontent.com/mediux-team/AURA/e11b753746779be12013bd5277f931f4c809f05f/frontend/public/mediux_word_logo.svg" alt="MediUX Logo" width="200">
+</a>
+<a href="https://github.com/mediux-team/AURA">
+  <img src="https://raw.githubusercontent.com/mediux-team/AURA/e11b753746779be12013bd5277f931f4c809f05f/frontend/public/aura_word_logo.svg" alt="AURA Logo" width="128">
+</a>
+
+## License
+
+`silo-plugin-metadata-aura` is licensed under `AGPL-3.0-or-later`. See [LICENSE](LICENSE).
