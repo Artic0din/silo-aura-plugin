@@ -34,12 +34,17 @@ jobs:
               awk -v run="$GITHUB_RUN_ID" '$2 == "Silo" && $3 == "release" && $4 == "run" && $5 == run { print $1; exit }') && [ -n "$tag" ]; then
             version="${tag#v}"
           else
-            # Auto-increment patch from latest tag.
+            # Release an untagged higher manifest version; otherwise increment the latest tag's patch.
             latest=$(git tag -l 'v*' --sort=-v:refname | head -n1)
-            if [ -z "$latest" ]; then
-              version=$(jq -r '.version' manifest.json)
+            base="${latest#v}"
+            manifest_version=$(jq -r '.version' manifest.json)
+            if ! [[ "$manifest_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "manifest.json version ${manifest_version} is not MAJOR.MINOR.PATCH" >&2
+              exit 1
+            fi
+            if [ -z "$latest" ] || [ "$(printf '%s\n%s\n' "$base" "$manifest_version" | sort -V | tail -n1)" != "$base" ]; then
+              version="$manifest_version"
             else
-              base="${latest#v}"
               IFS='.' read -r major minor patch <<< "$base"
               patch=$((patch + 1))
               version="${major}.${minor}.${patch}"
@@ -56,10 +61,10 @@ jobs:
             fi
             git tag -a "$tag" -m "Silo release run ${GITHUB_RUN_ID}"
             # Push only the tag. main is protected (PRs only), so pushing the
-            # bump commit there fails the whole run. The version is always
-            # derived from the latest tag, and the tag's commit carries the
-            # bumped manifest, so the released manifest-*.json stays correct
-            # even though main's manifest.json is never rewritten.
+            # bump commit there fails the whole run. The version comes from
+            # the latest tag or a higher manifest version, and the tag's commit
+            # carries the bumped manifest, so the released manifest-*.json
+            # stays correct even though main's manifest.json is never rewritten.
             git push origin "refs/tags/${tag}"
           fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"
