@@ -9,8 +9,8 @@ titles or choose artwork during metadata refreshes.
 
 ## Requirements
 
-- A Silo server with `image_picker_lookup_provider_ids` support, tracked in
-  [issue #1](https://github.com/Artic0din/silo-plugin-metadata-aura/issues/1).
+- A Silo server with `image_picker_lookup_provider_ids` support, requested in
+  [Silo-Server/silo-server#2198](https://github.com/Silo-Server/silo-server/issues/2198).
   An unmodified server only asks a provider for images when the title has that
   provider's own ID, which no title has for AURA; the extension lets Silo use
   the title's TMDB ID instead.
